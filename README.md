@@ -7,7 +7,7 @@ A web widget to embed your AtCoder rating.
 
 AtCoder のレーティングを表示するウィジェット。
 
-![atcoder-widget](atcoder-widget.png)
+![atcoder-widget](image.png)
 
 ## Usage
 
