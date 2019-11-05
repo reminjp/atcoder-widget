@@ -2,16 +2,12 @@
   const WIDGET_NAME = 'AtCoder Widget';
   const WIDGET_URL = 'https://github.com/rdrgn/atcoder-widget';
 
-  const COLORS = ['#000000', '#808080', '#804000', '#008000', '#00C0C0', '#0000FF', '#C0C000', '#FF8000', '#FF0000'];
+  // const COLORS = ['#000000', '#808080', '#804000', '#008000', '#00C0C0', '#0000FF', '#C0C000', '#FF8000', '#FF0000'];
+  const COLORS = ['#000000', '#9e9e9e', '#795548', '#558b2f', '#00b8d4', '#2962ff', '#f9a825', '#ef6c00', '#d50000'];
   const THRESHOLDS = [0, 400, 800, 1200, 1600, 2000, 2400, 2800, 1e5];
-  const PADDING_TOP = 34;
-  const PADDING_BOTTOM = 10;
-  const PADDING_LEFT = 10;
-  const PADDING_RIGHT = 10;
-  const MARKER_RADIUS = 4;
-  const MARKER_STROKE_WIDTH = 1;
-  const LINE_STROKE_WIDTH = 2;
-  const HEADER_MARGIN = 10;
+  const RADIUS = 4;
+  const STROKE_WIDTH = 2;
+  const PADDING = 16;
 
   class Widget {
     private user: string;
@@ -29,6 +25,7 @@
       ContestName: string;
       EndTime: string;
     }[] = [];
+    private isAvailable: boolean = false;
     private container: HTMLDivElement = null;
     private header: HTMLDivElement = null;
     private footer: HTMLDivElement = null;
@@ -57,17 +54,17 @@
       this.container = document.createElement('div');
       this.container.setAttribute(
         'style',
-        'position:relative;width:100%;height:100%;background-color:#ffffff;color:#9e9e9e;font-size:10px;'
+        'position:relative;width:100%;height:100%;background-color:#ffffff;color:#212121;font-size:10px;'
       );
       this.root.appendChild(this.container);
 
       this.header = document.createElement('div');
-      this.header.setAttribute('style', `position:absolute;top:${HEADER_MARGIN}px;left:${HEADER_MARGIN}px;`);
+      this.header.setAttribute('style', `position:absolute;top:${PADDING / 2}px;left:${PADDING / 2}px;`);
       this.header.innerHTML = `<span style="font-weight:bold;">${this.user}</span>`;
       this.container.appendChild(this.header);
 
       this.footer = document.createElement('div');
-      this.footer.setAttribute('style', `position:absolute;top:${HEADER_MARGIN}px;right:${HEADER_MARGIN}px;`);
+      this.footer.setAttribute('style', `position:absolute;bottom:${PADDING / 2}px;right:${PADDING / 2}px;`);
       this.footer.innerHTML = `<a href="${WIDGET_URL}" style="color:inherit;text-decoration:none;">${WIDGET_NAME}</a>`;
       this.container.appendChild(this.footer);
 
@@ -90,6 +87,11 @@
         this.history = request.response;
         this.history = this.history.filter(e => e.IsRated);
 
+        if (this.history.length < 2) {
+          console.error(`${WIDGET_NAME}: Rated results are fewer than 2`);
+          return;
+        }
+
         let xMin = new Date().getTime();
         let xMax = 0;
         let yMin = 1e5;
@@ -105,12 +107,10 @@
             return [x, y];
           })
           .map(([x, y]) => [
-            ((x - xMin) / (xMax - xMin)) * (this.width - PADDING_LEFT - PADDING_RIGHT) + PADDING_LEFT,
-            ((yMax - y) / (yMax - yMin)) * (this.height - PADDING_TOP - PADDING_BOTTOM) + PADDING_TOP,
+            ((x - xMin) / (xMax - xMin)) * (this.width - 2 * PADDING) + PADDING,
+            ((yMax - y) / (yMax - yMin)) * (this.height - 2 * PADDING) + PADDING,
           ]);
-        const thresholdYs = THRESHOLDS.map(
-          e => ((yMax - e) / (yMax - yMin)) * (this.height - PADDING_TOP - PADDING_BOTTOM) + PADDING_TOP
-        );
+        const thresholdYs = THRESHOLDS.map(e => ((yMax - e) / (yMax - yMin)) * (this.height - 2 * PADDING) + PADDING);
 
         const currentRationg =
           this.history[this.history.length - 1].NewRating || this.history[this.history.length - 1].OldRating;
@@ -140,8 +140,8 @@
           line.setAttributeNS(null, 'y1', String(points[i][1]));
           line.setAttributeNS(null, 'x2', String(points[i + 1][0]));
           line.setAttributeNS(null, 'y2', String(points[i + 1][1]));
-          line.setAttributeNS(null, 'stroke-width', String(LINE_STROKE_WIDTH));
-          line.setAttributeNS(null, 'stroke', '#9e9e9e');
+          line.setAttributeNS(null, 'stroke-width', String(STROKE_WIDTH));
+          line.setAttributeNS(null, 'stroke', '#212121');
           svg.appendChild(line);
           this.svgLines.push(line);
         }
@@ -151,13 +151,15 @@
           const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
           circle.setAttributeNS(null, 'cx', String(points[i][0]));
           circle.setAttributeNS(null, 'cy', String(points[i][1]));
-          circle.setAttributeNS(null, 'r', String(MARKER_RADIUS));
-          circle.setAttributeNS(null, 'stroke-width', String(MARKER_STROKE_WIDTH));
-          circle.setAttributeNS(null, 'stroke', '#ffffff');
+          circle.setAttributeNS(null, 'r', String(RADIUS));
+          circle.setAttributeNS(null, 'stroke-width', String(STROKE_WIDTH));
+          circle.setAttributeNS(null, 'stroke', '#212121');
           circle.setAttributeNS(null, 'fill', COLORS[THRESHOLDS.findIndex(e => this.history[i].NewRating < e)]);
           svg.appendChild(circle);
           this.svgMarkers.push(circle);
         }
+
+        this.isAvailable = true;
       };
 
       // TODO: detect the 'resize' of `this.root`
@@ -165,15 +167,18 @@
     }
 
     public dispose() {
-      if (this.root && this.container) {
-        this.root.removeChild(this.container);
-      }
+      if (!this.isAvailable) return;
+      this.isAvailable = false;
+
+      if (this.root && this.container) this.root.removeChild(this.container);
       this.root = null;
 
       window.removeEventListener('resize', this.onResize);
     }
 
     public onResize() {
+      if (!this.isAvailable) return;
+
       this.width = this.root.clientWidth;
       this.height = this.root.clientHeight;
 
@@ -192,12 +197,10 @@
           return [x, y];
         })
         .map(([x, y]) => [
-          ((x - xMin) / (xMax - xMin)) * (this.width - PADDING_LEFT - PADDING_RIGHT) + PADDING_LEFT,
-          ((yMax - y) / (yMax - yMin)) * (this.height - PADDING_TOP - PADDING_BOTTOM) + PADDING_TOP,
+          ((x - xMin) / (xMax - xMin)) * (this.width - 2 * PADDING) + PADDING,
+          ((yMax - y) / (yMax - yMin)) * (this.height - 2 * PADDING) + PADDING,
         ]);
-      const thresholdYs = THRESHOLDS.map(
-        e => ((yMax - e) / (yMax - yMin)) * (this.height - PADDING_TOP - PADDING_BOTTOM) + PADDING_TOP
-      );
+      const thresholdYs = THRESHOLDS.map(e => ((yMax - e) / (yMax - yMin)) * (this.height - 2 * PADDING) + PADDING);
 
       for (let i = 0; i + 1 < thresholdYs.length; i++) {
         this.svgBackgrounds[i].setAttributeNS(null, 'y', String(thresholdYs[i + 1]));
