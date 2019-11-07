@@ -2,6 +2,9 @@
   const WIDGET_NAME = 'AtCoder Widget';
   const WIDGET_URL = 'https://github.com/rdrgn/atcoder-widget';
 
+  const MIN_WIDTH = 100;
+  const MIN_HEIGHT = 100;
+
   // const COLORS = ['#000000', '#808080', '#804000', '#008000', '#00C0C0', '#0000FF', '#C0C000', '#FF8000', '#FF0000'];
   const COLORS = ['#000000', '#9e9e9e', '#795548', '#558b2f', '#00b8d4', '#2962ff', '#f9a825', '#ef6c00', '#d50000'];
   const THRESHOLDS = [0, 400, 800, 1200, 1600, 2000, 2400, 2800, 1e5];
@@ -48,8 +51,8 @@
         return;
       }
 
-      this.width = this.root.clientWidth;
-      this.height = this.root.clientHeight;
+      this.width = Math.max(MIN_WIDTH, this.root.clientWidth);
+      this.height = Math.max(MIN_HEIGHT, this.root.clientHeight);
 
       this.container = document.createElement('div');
       this.container.setAttribute(
@@ -84,13 +87,16 @@
       request.responseType = 'json';
       request.send();
       request.onload = () => {
-        this.history = request.response;
+        this.history = request.response || [];
         this.history = this.history.filter(e => e.IsRated);
 
         if (this.history.length < 2) {
           console.error(`${WIDGET_NAME}: Rated results are fewer than 2`);
           return;
         }
+
+        this.width = Math.max(MIN_WIDTH, this.root.clientWidth);
+        this.height = Math.max(MIN_HEIGHT, this.root.clientHeight);
 
         let xMin = new Date().getTime();
         let xMax = 0;
@@ -179,8 +185,8 @@
     public onResize() {
       if (!this.isAvailable) return;
 
-      this.width = this.root.clientWidth;
-      this.height = this.root.clientHeight;
+      this.width = Math.max(MIN_WIDTH, this.root.clientWidth);
+      this.height = Math.max(MIN_HEIGHT, this.root.clientHeight);
 
       let xMin = new Date().getTime();
       let xMax = 0;
