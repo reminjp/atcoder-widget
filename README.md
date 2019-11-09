@@ -17,7 +17,7 @@ Add the following HTML snippet to your web site.
 
 ```html
 <div class="atcoder-widget" user="your_atcoder_id">
-  <script async src="https://cdn.jsdelivr.net/npm/atcoder-widget/dist/widget.js"></script>
+  <script async src="https://cdn.jsdelivr.net/npm/atcoder-widget@0.0.1/dist/widget.js"></script>
 </div>
 ```
 
