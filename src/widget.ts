@@ -55,21 +55,39 @@
       this.height = Math.max(MIN_HEIGHT, this.root.clientHeight);
 
       this.container = document.createElement('div');
-      this.container.setAttribute(
-        'style',
-        'position:relative;width:100%;height:100%;background-color:#ffffff;color:#212121;font-size:10px;'
-      );
+      this.container.style.setProperty('position', 'relative');
+      this.container.style.setProperty('width', '100%');
+      this.container.style.setProperty('height', '100%');
+      this.container.style.setProperty('background-color', '#ffffff');
+      this.container.style.setProperty('color', '#212121');
+      this.container.style.setProperty('font-size', '10px');
       this.root.appendChild(this.container);
 
       this.header = document.createElement('div');
-      this.header.setAttribute('style', `position:absolute;top:${PADDING / 2}px;left:${PADDING / 2}px;`);
-      this.header.innerHTML = `<span style="font-weight:bold;">${this.user}</span>`;
+      this.header.style.setProperty('position', 'absolute');
+      this.header.style.setProperty('top', `${PADDING / 2}px`);
+      this.header.style.setProperty('left', `${PADDING / 2}px`);
       this.container.appendChild(this.header);
+      {
+        const headerInner = document.createElement('span');
+        headerInner.style.setProperty('font-weight', 'bold');
+        headerInner.innerHTML = this.user;
+        this.header.appendChild(headerInner);
+      }
 
       this.footer = document.createElement('div');
-      this.footer.setAttribute('style', `position:absolute;bottom:${PADDING / 2}px;right:${PADDING / 2}px;`);
-      this.footer.innerHTML = `<a href="${WIDGET_URL}" style="color:inherit;text-decoration:none;">${WIDGET_NAME}</a>`;
+      this.footer.style.setProperty('position', 'absolute');
+      this.footer.style.setProperty('bottom', `${PADDING / 2}px`);
+      this.footer.style.setProperty('right', `${PADDING / 2}px`);
       this.container.appendChild(this.footer);
+      {
+        const footerInner = document.createElement('a');
+        footerInner.href = WIDGET_URL;
+        footerInner.style.setProperty('color', 'inherit');
+        footerInner.style.setProperty('text-decoration', 'none');
+        footerInner.innerHTML = WIDGET_NAME;
+        this.footer.appendChild(footerInner);
+      }
 
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       svg.setAttributeNS(null, 'version', '1.1');
