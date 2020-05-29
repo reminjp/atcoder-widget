@@ -248,6 +248,6 @@
 
   // main
   const root = document.currentScript.parentElement;
-  const user = root.getAttribute('user');
+  const user = root.dataset.user;
   new Widget(root, user);
 })();
