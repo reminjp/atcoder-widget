@@ -5,3 +5,6 @@ node_modules/
 # output
 dist/
 public/
+
+# Mac OS
+.DS_Store
