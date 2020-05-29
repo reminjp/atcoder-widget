@@ -58,7 +58,7 @@
       this.container.style.setProperty('position', 'relative');
       this.container.style.setProperty('width', '100%');
       this.container.style.setProperty('height', '100%');
-      this.container.style.setProperty('background-color', '#ffffff');
+      this.container.style.setProperty('background-color', '#f5f5f5');
       this.container.style.setProperty('color', '#212121');
       this.container.style.setProperty('font-size', '10px');
       this.root.appendChild(this.container);
@@ -182,6 +182,8 @@
           svg.appendChild(circle);
           this.svgMarkers.push(circle);
         }
+
+        this.container.style.setProperty('background-color', '#ffffff');
 
         this.isAvailable = true;
       };
