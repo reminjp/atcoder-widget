@@ -106,7 +106,7 @@
       request.send();
       request.onload = () => {
         this.history = request.response || [];
-        this.history = this.history.filter(e => e.IsRated);
+        this.history = this.history.filter((e) => e.IsRated);
 
         if (this.history.length < 2) {
           console.error(`${WIDGET_NAME}: Rated results are fewer than 2`);
@@ -121,7 +121,7 @@
         let yMin = 1e5;
         let yMax = 0;
         const points = this.history
-          .map(e => {
+          .map((e) => {
             const x = new Date(e.EndTime).getTime();
             const y = e.NewRating;
             if (x < xMin) xMin = x;
@@ -134,13 +134,13 @@
             ((x - xMin) / (xMax - xMin)) * (this.width - 2 * PADDING) + PADDING,
             ((yMax - y) / (yMax - yMin)) * (this.height - 2 * PADDING) + PADDING,
           ]);
-        const thresholdYs = THRESHOLDS.map(e => ((yMax - e) / (yMax - yMin)) * (this.height - 2 * PADDING) + PADDING);
+        const thresholdYs = THRESHOLDS.map((e) => ((yMax - e) / (yMax - yMin)) * (this.height - 2 * PADDING) + PADDING);
 
         const currentRationg =
           this.history[this.history.length - 1].NewRating || this.history[this.history.length - 1].OldRating;
-        const currentRatingColor = COLORS[THRESHOLDS.findIndex(e => currentRationg < e)];
+        const currentRatingColor = COLORS[THRESHOLDS.findIndex((e) => currentRationg < e)];
         const highestRating = this.history.reduce((max, e) => Math.max(max, e.NewRating), 0);
-        const highestRatingColor = COLORS[THRESHOLDS.findIndex(e => highestRating < e)];
+        const highestRatingColor = COLORS[THRESHOLDS.findIndex((e) => highestRating < e)];
 
         this.header.innerHTML = `<a href="https://atcoder.jp/users/${this.user}" style="color:${currentRatingColor};text-decoration:none;font-weight:bold;">${this.user}</a> Current <span style="color:${currentRatingColor};">${currentRationg}</span> Highest <span style="color:${highestRatingColor};">${highestRating}</span>`;
 
@@ -178,7 +178,7 @@
           circle.setAttributeNS(null, 'r', String(RADIUS));
           circle.setAttributeNS(null, 'stroke-width', String(STROKE_WIDTH));
           circle.setAttributeNS(null, 'stroke', '#212121');
-          circle.setAttributeNS(null, 'fill', COLORS[THRESHOLDS.findIndex(e => this.history[i].NewRating < e)]);
+          circle.setAttributeNS(null, 'fill', COLORS[THRESHOLDS.findIndex((e) => this.history[i].NewRating < e)]);
           svg.appendChild(circle);
           this.svgMarkers.push(circle);
         }
@@ -211,7 +211,7 @@
       let yMin = 1e5;
       let yMax = 0;
       const points = this.history
-        .map(e => {
+        .map((e) => {
           const x = new Date(e.EndTime).getTime();
           const y = e.NewRating;
           if (x < xMin) xMin = x;
@@ -224,7 +224,7 @@
           ((x - xMin) / (xMax - xMin)) * (this.width - 2 * PADDING) + PADDING,
           ((yMax - y) / (yMax - yMin)) * (this.height - 2 * PADDING) + PADDING,
         ]);
-      const thresholdYs = THRESHOLDS.map(e => ((yMax - e) / (yMax - yMin)) * (this.height - 2 * PADDING) + PADDING);
+      const thresholdYs = THRESHOLDS.map((e) => ((yMax - e) / (yMax - yMin)) * (this.height - 2 * PADDING) + PADDING);
 
       for (let i = 0; i + 1 < thresholdYs.length; i++) {
         this.svgBackgrounds[i].setAttributeNS(null, 'y', String(thresholdYs[i + 1]));
