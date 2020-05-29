@@ -1,6 +1,6 @@
 {
   "name": "atcoder-widget",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A web widget to embed your AtCoder rating.",
   "license": "MIT",
   "author": "remin",
